@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">misConciertos</string>
+    <string name="titulo">Mis conciertos</string>
+    <string name="artista">Nombre del artista</string>
+    <string name="fechaEvento">Fecha del evento</string>
+    <string name="genero">Género Músical</string>
+    <string name="btn">Registrar</string>
+</resources>

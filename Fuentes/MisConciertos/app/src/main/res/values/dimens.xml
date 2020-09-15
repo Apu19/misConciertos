@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="tamanioTitulo">35sp</dimen>
+    <dimen name="marginTopBase">20dp</dimen>
+    <dimen name="paddingGeneral">20dp</dimen>
+</resources>
