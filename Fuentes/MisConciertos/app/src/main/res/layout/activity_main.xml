@@ -23,21 +23,23 @@
                 android:text="Nombre del artista"></TextView>
 
             <EditText
+                android:inputType="text"
                 android:id="@+id/nombreArtista"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></EditText>
 
             <Button
+                android:layout_marginTop="@dimen/marginTopBase"
                 android:id="@+id/fechaBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha del evento"></Button>
 
             <EditText
-                android:focusable="false"
                 android:id="@+id/fechaTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
                 android:inputType="date"></EditText>
 
             <TextView
@@ -77,14 +79,13 @@
                 android:layout_marginTop="@dimen/marginTopBase"></Spinner>
 
             <Button
-                android:layout_width="match_parent"
+                android:id="@+id/registrarBtn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/marginTopBase"
-                android:layout_marginRight="100dp"
                 android:background="@color/primary_light"
-                android:text="@string/btn"
-                android:id="@+id/registrarBtn"></Button>
+                android:text="@string/btn"></Button>
 
             <TextView
                 android:layout_width="match_parent"

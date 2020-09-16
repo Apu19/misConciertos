@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private Spinner generoMusical;
     private Spinner calificacion;
     private Button fechaBtn;
@@ -27,37 +27,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.registrarBtn = findViewById(R.id.registrarBtn);
-        this.nombreArtista = findViewById(R.id.nombreArtista);
-        this.valorEntrada = findViewById(R.id.nombreArtista);
         setContentView(R.layout.activity_main);
-        this.generoMusical = findViewById(R.id.spnr);
+        registrarBtn = findViewById(R.id.registrarBtn);
+        nombreArtista = findViewById(R.id.nombreArtista);
+        generoMusical = findViewById(R.id.spnr);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.generoMusical, android.R.layout.simple_spinner_item);
-        generoMusical.setAdapter(adapter);
-        this.calificacion = findViewById(R.id.spnr2);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.calificacion, android.R.layout.simple_spinner_item);
+        this.generoMusical.setAdapter(adapter);
+        calificacion = findViewById(R.id.spnr2);
         this.calificacion.setAdapter(adapter2);
-        this.fechaBtn = findViewById(R.id.fechaBtn);
-        this.fechaTxt = findViewById(R.id.fechaTxt);
-        this.fechaBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view == fechaBtn) {
-                    final Calendar c = Calendar.getInstance();
-                    dia = c.get(Calendar.DAY_OF_MONTH);
-                    mes = c.get(Calendar.MONTH);
-                    anio = c.get(Calendar.YEAR);
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
-                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            fechaTxt.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
-                        }
-                    }, anio, mes, dia);
-                    datePickerDialog.show();
-                }
-            }
-        });
-
-
+        fechaBtn = findViewById(R.id.fechaBtn);
+        fechaTxt = findViewById(R.id.fechaTxt);
+        fechaBtn.setOnClickListener(this);
+        registrarBtn.setOnClickListener(this);
     }
     private void mostrarErrores (List<String> errores) {
         String mensaje = "";
@@ -70,6 +52,31 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Aceptar", null)
                 .create()
                 .show();
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fechaBtn:
+                    final Calendar c = Calendar.getInstance();
+                    dia = c.get(Calendar.DAY_OF_MONTH);
+                    mes = c.get(Calendar.MONTH);
+                    anio = c.get(Calendar.YEAR);
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            fechaTxt.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                        }
+                    }, anio, mes, dia);
+                    datePickerDialog.show();
+                break;
+            case R.id.registrarBtn:
+                    List<String> errores = new ArrayList<>();
+                    if(nombreArtista.getText().toString().isEmpty()){
+                        errores.add("Debe ingresar el nombre del artista");
+                    }
+                    mostrarErrores(errores);
+
+                break;
+        }
     }
 }
 
