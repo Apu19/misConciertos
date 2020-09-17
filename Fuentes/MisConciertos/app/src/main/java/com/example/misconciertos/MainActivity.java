@@ -38,30 +38,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String genero;
     private String valorCal;
     private ListView conciertosLv;
+    EventosDAO eventosDAO = new EventosDAO();
+    ArrayAdapter<Evento> conciertosAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        conciertosLv = findViewById(R.id.conciertosLv);
-        valorEntrada = findViewById(R.id.valorEntrada);
-        registrarBtn = findViewById(R.id.registrarBtn);
-        nombreArtista = findViewById(R.id.nombreArtista);
-        generoMusical = findViewById(R.id.spnr);
+        this.conciertosLv = findViewById(R.id.conciertosLv);
+        this.conciertosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventosDAO.getAll());
+        this.conciertosLv.setAdapter(conciertosAdapter);
+        this.valorEntrada = findViewById(R.id.valorEntrada);
+        this.registrarBtn = findViewById(R.id.registrarBtn);
+        this.nombreArtista = findViewById(R.id.nombreArtista);
+        this.generoMusical = findViewById(R.id.spnr);
+        this.calificacion = findViewById(R.id.spnr2);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.generoMusical, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this, R.array.calificacion, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.generoMusical.setAdapter(adapter);
-        calificacion = findViewById(R.id.spnr2);
         this.calificacion.setAdapter(adapter2);
-        fechaBtn = findViewById(R.id.fechaBtn);
-        fechaTxt = findViewById(R.id.fechaTxt);
-        fechaBtn.setOnClickListener(this);
-        registrarBtn.setOnClickListener(this);
-        itemsGenero = getResources().getStringArray(R.array.generoMusical);
-        itemsCalificacion = getResources().getStringArray(R.array.calificacion);
-        generoMusical.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        this.fechaBtn = findViewById(R.id.fechaBtn);
+        this.fechaTxt = findViewById(R.id.fechaTxt);
+        this.fechaBtn.setOnClickListener(this);
+        this.registrarBtn.setOnClickListener(this);
+        this.itemsGenero = getResources().getStringArray(R.array.generoMusical);
+        this.itemsCalificacion = getResources().getStringArray(R.array.calificacion);
+        this.generoMusical.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
                 genero = itemsGenero[i].toString();
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calificacion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                valorCal = itemsCalificacion[i];
+                valorCal = itemsCalificacion[i].toString();
             }
 
             @Override
@@ -137,17 +142,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     if (errores.isEmpty()) {
                         Evento e = new Evento();
-                        ArrayAdapter<Evento> conciertosAdapter;
                         e.setNombreArtista(nombreArtista.getText().toString());
                         e.setValor(valor);
                         e.setCalificacion(valorCal);
                         e.setFecha(fechaTxt.getText().toString());
-                        EventosDAO eventosDAO = new EventosDAO();
                         eventosDAO.add(e);
-                        conciertosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventosDAO.getAll(e));
-                        this.conciertosLv.setAdapter(conciertosAdapter);
+                        Toast.makeText(MainActivity.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
                         conciertosAdapter.notifyDataSetChanged();
-                        Toast.makeText(this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
                     } else {
                         mostrarErrores(errores);
                     }
