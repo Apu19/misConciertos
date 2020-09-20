@@ -21,18 +21,19 @@ public class Adaptador extends ArrayAdapter<Evento> {
     private int resourceLayout;
 
     public Adaptador(@NonNull Context context, int resource, List<Evento> objects) {
-        super(context, resource);
+        super(context, resource, objects);
         this.eventosList = objects;
         this.mcontext = context;
-this.resourceLayout= resource;
+        this.resourceLayout = resource;
 
     }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
-        if(view == null)
-            view = LayoutInflater.from(mcontext).inflate(resourceLayout,null);
+        if (view == null)
+            view = LayoutInflater.from(mcontext).inflate(resourceLayout, null);
 
         Evento evento = eventosList.get(position);
 
@@ -43,7 +44,7 @@ this.resourceLayout= resource;
         fecha.setText(evento.getFecha());
 
         TextView valor = view.findViewById(R.id.valorTxt);
-        valor.setText(""+evento.getValor());
+        valor.setText("$" + evento.getValor());
 
         ImageView calificacion = view.findViewById(R.id.imgView);
         calificacion.setImageResource(evento.getCalificacion());

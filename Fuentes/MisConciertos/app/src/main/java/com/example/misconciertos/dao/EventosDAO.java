@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class EventosDAO {
-    private static List<Evento> eventos = new ArrayList<>();
-    public void add(Evento e) {
+    public static List<Evento> eventos = new ArrayList<Evento>();
+    public void add(Evento e){
         eventos.add(e);
     }
     public List<Evento> getAll(){

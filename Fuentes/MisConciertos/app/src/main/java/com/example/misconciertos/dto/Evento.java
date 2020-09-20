@@ -2,7 +2,7 @@ package com.example.misconciertos.dto;
 
 import java.io.Serializable;
 
-public class Evento implements Serializable {
+public class Evento {
     public String getFecha() {
         return fecha;
     }
@@ -26,6 +26,7 @@ public class Evento implements Serializable {
     public void setValor(int valor) {
         this.valor = valor;
     }
+
     private String fecha;
     private String nombreArtista;
     private int valor;

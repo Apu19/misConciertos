@@ -28,12 +28,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></EditText>
 
-            <Button
+            <TextView
                 android:layout_marginTop="@dimen/marginTopBase"
-                android:id="@+id/fechaBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha del evento"></Button>
+                android:text="Fecha del evento"></TextView>
 
             <EditText
                 android:id="@+id/fechaTxt"
@@ -96,10 +95,12 @@
                 android:textAlignment="center"
                 android:textColor="@color/icons"
                 android:textSize="@dimen/tamanioTitulo"></TextView>
+
             <ListView
                 android:id="@+id/conciertosLv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="267dp"
+                android:nestedScrollingEnabled="true"></ListView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

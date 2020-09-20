@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
     <ImageView
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="80dp"
         android:id="@+id/imgView"
         ></ImageView>
@@ -16,7 +16,9 @@
         android:id="@+id/artistaTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/tamanioLetra"></TextView>
+        android:textSize="@dimen/tamanioLetra"
+        android:textStyle="bold"
+        android:textAlignment="center"></TextView>
         <LinearLayout
             android:layout_marginTop="@dimen/marginTopBase"
             android:layout_width="match_parent"
@@ -27,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:textAlignment="textEnd"
             android:id="@+id/fechaTxtView"></TextView>
         <TextView
             android:id="@+id/valorTxt"
@@ -35,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/tamanioLetra"
-            android:textAlignment="center"></TextView>
+            android:textAlignment="textEnd"></TextView>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

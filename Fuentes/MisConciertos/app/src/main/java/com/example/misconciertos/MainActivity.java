@@ -26,10 +26,9 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ListAdapter eventosAdapter;
+    Adaptador eventosAdapter;
     private Spinner generoMusical;
     private Spinner calificacion;
-    private Button fechaBtn;
     private Button registrarBtn;
     private EditText fechaTxt;
     private EditText nombreArtista;
@@ -37,20 +36,15 @@ public class MainActivity extends AppCompatActivity {
     private int dia, mes, anio;
     private String[] itemsGenero;
     private String[] itemsCalificacion;
-    private String genero;
-    private String valorCal;
     private ListView conciertosLv;
     private EventosDAO eventosDAO = new EventosDAO();
-    ArrayAdapter<Evento> conciertosAdapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.conciertosLv = findViewById(R.id.conciertosLv);
-        this.eventosAdapter = new Adaptador(this,R.layout.items,eventosDAO.getAll());
-        this.conciertosLv.setAdapter(conciertosAdapter);
+        this.eventosAdapter = new Adaptador(this, R.layout.items, eventosDAO.getAll());
+        this.conciertosLv.setAdapter(eventosAdapter);
         this.valorEntrada = findViewById(R.id.valorEntrada);
         this.registrarBtn = findViewById(R.id.registrarBtn);
         this.nombreArtista = findViewById(R.id.nombreArtista);
@@ -62,33 +56,10 @@ public class MainActivity extends AppCompatActivity {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.generoMusical.setAdapter(adapter);
         this.calificacion.setAdapter(adapter2);
-        this.fechaBtn = findViewById(R.id.fechaBtn);
         this.fechaTxt = findViewById(R.id.fechaTxt);
         this.itemsGenero = getResources().getStringArray(R.array.generoMusical);
         this.itemsCalificacion = getResources().getStringArray(R.array.calificacion);
-        this.generoMusical.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
-                genero = itemsGenero[i].toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        calificacion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                valorCal = itemsCalificacion[i];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        this.fechaBtn.setOnClickListener(new View.OnClickListener() {
+        this.fechaTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Calendar c = Calendar.getInstance();
@@ -106,50 +77,67 @@ public class MainActivity extends AppCompatActivity {
         this.registrarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int valor = 0;
                 List<String> errores = new ArrayList<>();
-                if (nombreArtista.getText().toString().isEmpty()) {
+                String nombre = nombreArtista.getText().toString();
+                if (nombre.isEmpty()) {
                     errores.add("Ingrese nombre del artista");
                 }
-                if (fechaTxt.getText().toString().isEmpty()) {
-                    errores.add("Seleccione fecha");
+
+                String fechaEvento = fechaTxt.getText().toString();
+                if (fechaEvento.isEmpty()) {
+                    errores.add("Seleccione fecha del evento");
                 }
-                if (genero.equals("Seleccionar")) {
-                    errores.add("Seleccione género");
+
+                String generoTxt = generoMusical.getSelectedItem().toString();
+                if (generoTxt.equalsIgnoreCase("Seleccionar")) {
+                    errores.add("Seleccione género musical");
                 }
-                try {
-                    valor = Integer.parseInt(valorEntrada.getText().toString());
-                    if (valor <= 0) {
-                        throw new NumberFormatException();
+
+                int entrada = 0;
+                String valor = valorEntrada.getText().toString().trim();
+                if (valor.isEmpty()) {
+                    errores.add("Ingrese valor de la entrada");
+                }else {
+                    try {
+                        entrada = Integer.parseInt(valor);
+                        if (entrada <= 0) {
+                            throw new NumberFormatException();
+                        }
+                    } catch (Exception ex) {
+                        errores.add("El valor de la entrada debe ser mayor a 0");
                     }
-                } catch (NumberFormatException ex) {
-                    errores.add("El valor debe ser mayor a 0");
                 }
-                if (valorCal.equals("Seleccionar")) {
-                    errores.add("Seleccione Calificación");
+
+                String calificacionTxt = calificacion.getSelectedItem().toString();
+                int calificacionItem = 0;
+                try {
+                    calificacionItem = Integer.parseInt(calificacionTxt);
+                } catch (Exception ex) {
+                    errores.add("Seleccione calificación");
                 }
-                int cal = Integer.parseInt(valorCal.toString());
-                if (cal > 0 && cal < 4 ) {
-                    cal = R.drawable.sad;
-                }
-                if (cal == 4 || cal == 5) {
-                    cal = R.drawable.thinking;
-                }
-                if(cal == 6 || cal == 7) {
-                    cal = R.drawable.happy;
-                }
+
                 if (errores.isEmpty()) {
                     Evento e = new Evento();
-                    e.setNombreArtista(nombreArtista.getText().toString());
-                    e.setValor(valor);
-                    e.setCalificacion(cal);
-                    e.setFecha(fechaTxt.getText().toString());
+                    e.setNombreArtista(nombre);
+                    e.setFecha(fechaEvento);
+                    e.setValor(entrada);
+                    if (calificacionItem > 0 && calificacionItem < 4) {
+                        calificacionItem = R.drawable.sad;
+                    }
+                    if(calificacionItem == 4 || calificacionItem == 5) {
+                        calificacionItem = R.drawable.thinking;
+                    }
+                    if(calificacionItem == 6 || calificacionItem == 7) {
+                        calificacionItem = R.drawable.happy;
+                    }
+                    e.setCalificacion(calificacionItem);
                     eventosDAO.add(e);
-                    conciertosAdapter.notifyDataSetChanged();
-                    Toast.makeText(MainActivity.this, "Se registó correctamente", Toast.LENGTH_SHORT).show();
+                    eventosAdapter.notifyDataSetChanged();
+                    Toast.makeText(MainActivity.this, "Se ha registrado correctamente", Toast.LENGTH_SHORT).show();
                 } else {
                     mostrarErrores(errores);
                 }
+
             }
         });
     }
