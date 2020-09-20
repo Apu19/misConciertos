@@ -3,4 +3,5 @@
     <dimen name="tamanioTitulo">35sp</dimen>
     <dimen name="marginTopBase">20dp</dimen>
     <dimen name="paddingGeneral">20dp</dimen>
+    <dimen name="tamanioLetra">20sp</dimen>
 </resources>

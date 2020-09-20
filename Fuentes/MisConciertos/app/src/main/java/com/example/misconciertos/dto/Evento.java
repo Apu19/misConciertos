@@ -26,17 +26,16 @@ public class Evento implements Serializable {
     public void setValor(int valor) {
         this.valor = valor;
     }
-
-    public String getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(String calificacion) {
-        this.calificacion = calificacion;
-    }
-
     private String fecha;
     private String nombreArtista;
     private int valor;
-    private String calificacion;
+    private int calificacion;
+
+    public int getCalificacion() {
+        return calificacion;
+    }
+
+    public void setCalificacion(int calificacion) {
+        this.calificacion = calificacion;
+    }
 }

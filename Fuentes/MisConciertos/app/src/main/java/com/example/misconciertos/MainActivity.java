@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
+    ListAdapter eventosAdapter;
     private Spinner generoMusical;
     private Spinner calificacion;
     private Button fechaBtn;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String genero;
     private String valorCal;
     private ListView conciertosLv;
-    EventosDAO eventosDAO = new EventosDAO();
+    private EventosDAO eventosDAO = new EventosDAO();
     ArrayAdapter<Evento> conciertosAdapter;
 
 
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.conciertosLv = findViewById(R.id.conciertosLv);
-        this.conciertosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventosDAO.getAll());
+        this.eventosAdapter = new Adaptador(this,R.layout.items,eventosDAO.getAll());
         this.conciertosLv.setAdapter(conciertosAdapter);
         this.valorEntrada = findViewById(R.id.valorEntrada);
         this.registrarBtn = findViewById(R.id.registrarBtn);
@@ -62,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.calificacion.setAdapter(adapter2);
         this.fechaBtn = findViewById(R.id.fechaBtn);
         this.fechaTxt = findViewById(R.id.fechaTxt);
-        this.fechaBtn.setOnClickListener(this);
-        this.registrarBtn.setOnClickListener(this);
         this.itemsGenero = getResources().getStringArray(R.array.generoMusical);
         this.itemsCalificacion = getResources().getStringArray(R.array.calificacion);
         this.generoMusical.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -80,12 +80,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calificacion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                valorCal = itemsCalificacion[i].toString();
+                valorCal = itemsCalificacion[i];
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+        this.fechaBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+                dia = c.get(Calendar.DAY_OF_MONTH);
+                mes = c.get(Calendar.MONTH);
+                anio = c.get(Calendar.YEAR);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        fechaTxt.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+                }, anio, mes, dia);
+                datePickerDialog.show();
+            }
+        });
+        this.registrarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int valor = 0;
+                List<String> errores = new ArrayList<>();
+                if (nombreArtista.getText().toString().isEmpty()) {
+                    errores.add("Ingrese nombre del artista");
+                }
+                if (fechaTxt.getText().toString().isEmpty()) {
+                    errores.add("Seleccione fecha");
+                }
+                if (genero.equals("Seleccionar")) {
+                    errores.add("Seleccione género");
+                }
+                try {
+                    valor = Integer.parseInt(valorEntrada.getText().toString());
+                    if (valor <= 0) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException ex) {
+                    errores.add("El valor debe ser mayor a 0");
+                }
+                if (valorCal.equals("Seleccionar")) {
+                    errores.add("Seleccione Calificación");
+                }
+                int cal = Integer.parseInt(valorCal.toString());
+                if (cal > 0 && cal < 4 ) {
+                    cal = R.drawable.sad;
+                }
+                if (cal == 4 || cal == 5) {
+                    cal = R.drawable.thinking;
+                }
+                if(cal == 6 || cal == 7) {
+                    cal = R.drawable.happy;
+                }
+                if (errores.isEmpty()) {
+                    Evento e = new Evento();
+                    e.setNombreArtista(nombreArtista.getText().toString());
+                    e.setValor(valor);
+                    e.setCalificacion(cal);
+                    e.setFecha(fechaTxt.getText().toString());
+                    eventosDAO.add(e);
+                    conciertosAdapter.notifyDataSetChanged();
+                    Toast.makeText(MainActivity.this, "Se registó correctamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    mostrarErrores(errores);
+                }
             }
         });
     }
@@ -102,59 +166,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .create()
                 .show();
     }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.fechaBtn:
-                final Calendar c = Calendar.getInstance();
-                dia = c.get(Calendar.DAY_OF_MONTH);
-                mes = c.get(Calendar.MONTH);
-                anio = c.get(Calendar.YEAR);
-                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        fechaTxt.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
-                    }
-                }, anio, mes, dia);
-                datePickerDialog.show();
-                break;
-            case R.id.registrarBtn:
-                int valor = 0;
-                List<String> errores = new ArrayList<>();
-                if (nombreArtista.getText().toString().isEmpty()) {
-                    errores.add("Ingrese nombre del artista");
-                    if (fechaTxt.getText().toString().isEmpty()) {
-                        errores.add("Seleccione fecha");
-                    }
-                    if (genero.equals("Seleccionar")) {
-                        errores.add("Seleccione género");
-                    }
-                    try {
-                        valor = Integer.parseInt(valorEntrada.getText().toString());
-                        if (valor <= 0) {
-                            throw new NumberFormatException();
-                        }
-                    } catch (NumberFormatException ex) {
-                        errores.add("El valor debe ser mayor a 0");
-                    }
-                    if (valorCal.equals("Seleccionar")) {
-                        errores.add("Seleccione Calificación");
-                    }
-                    if (errores.isEmpty()) {
-                        Evento e = new Evento();
-                        e.setNombreArtista(nombreArtista.getText().toString());
-                        e.setValor(valor);
-                        e.setCalificacion(valorCal);
-                        e.setFecha(fechaTxt.getText().toString());
-                        eventosDAO.add(e);
-                        Toast.makeText(MainActivity.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
-                        conciertosAdapter.notifyDataSetChanged();
-                    } else {
-                        mostrarErrores(errores);
-                    }
-                    break;
-                }
-        }
-    }
 }
+
 
